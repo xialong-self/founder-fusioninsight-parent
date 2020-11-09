@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<link href="'+basePath+'/bootstrap/css/bootstrap-table.min.css?v=' + localVersion + '" rel="stylesheet" />');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/js/founder/founder.pagelist.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table-zh-CN.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+    <div id="toolbar" >
+        <button id="btn_add" type="button" class="btn btn-default btn" onclick="openAddWin()">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+    </div>
+    <table id="dataGrid"></table>
+
+</body>
+
+<script type="text/javascript">
+var columns_config = [];
+columns_config[columns_config.length]={field: 'id',title: 'ID',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'user_account',title: '用户账号',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'user_name',title: '用户名',align: 'center',valign: 'middle'};
+
+columns_config[columns_config.length]={title: '操作',align: 'center',valign: 'middle',width: 160,
+        formatter: function (value, row, index) {
+            var html = '<a class="btn btn-link" onclick="modifyRow(\''+row.id+'\')">修改</a> &nbsp;';
+            html += '<a class="btn btn-link" onclick="deleteRow(\''+row.id+'\')">删除</a>';
+            return html;
+        }
+    };
+
+
+$(function(){
+
+	var page_config = {
+	    tableId: 'dataGrid',
+		url: basePath+'/user/queryPageList',
+        columns: columns_config
+	};
+	initPageListTable(page_config);
+});
+
+function openAddWin(){
+	openUrlWin(basePath+"/html/user/formPage.html",{winName:"新增用户",width:"800px"});
+}
+
+function modifyRow(id){
+	openUrlWin(basePath+"/html/user/formPage.html?id="+id,{winName:"修改上报",width:"800px"});
+}
+
+function deleteRow(id){
+	openUrlWin(basePath+"/html/user/deletePage.html?id="+id,{winName:"删除上报",width:"400px",height:"100px"});
+}
+
+function refreshPageList(){
+    $("[name=refresh]").click();
+}
+</script>
+</html>

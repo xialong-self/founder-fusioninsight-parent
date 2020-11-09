@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<link href="'+basePath+'/bootstrap/css/bootstrap-table.min.css?v=' + localVersion + '" rel="stylesheet" />');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/js/founder/founder.pagelist.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table-zh-CN.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<title>执行类说明文档</title>
+</head>
+<body>
+<div style="width:100%">
+<div class="leftTitle">执行类说明文档</div>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">HTTP请求 </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类全名</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">com.founder.scheduler.runnable.impl.HttpRequestRunnable</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类功能说明</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">根据配置请求http接口</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">配置数据结构</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">
+			        	{<br/>
+							&nbsp;"url":"请求的url，例如https://www.baidu.com",<br/>
+							&nbsp;"paramMap":请求的http需要的参数，例如{"param":"p1"}，如果是get请求，也可以写到url里，然后不配置此项,<br/>
+							&nbsp;"methodType":请求的http类型，可不填，默认GET，可选POST,<br/>
+							&nbsp;"connectTimeout":请求的http超时时间，可不填，默认30*1000,<br/>
+							&nbsp;"connectionRequestTimeout":请求的http超时时间，可不填，默认30*1000,<br/>
+							&nbsp;"socketTimeout":请求的http超时时间，可不填，默认5*60*1000<br/>
+						}<br/>
+						</div>
+			        </div>			        
+			    </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">SQL脚本</a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+        <div class="panel-body">
+            <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类全名</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">com.founder.scheduler.runnable.impl.DbSqlRunnable</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类功能说明</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">定时执行配置的SQL脚本，可配置参数</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">配置数据结构</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">
+			        	{<br/>
+							&nbsp;"source_type":"数据源类型，目前只支持MYSQL",<br/>
+							&nbsp;"jdbc_url":"数据库连接URL",<br/>
+							&nbsp;"jdbc_username":"数据库用户名",<br/>
+							&nbsp;"jdbc_password":"数据库密码",<br/>
+							&nbsp;"sql":"执行的sql，多个的时候用英文“;”分割"<br/>
+						}<br/>
+						</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">SQL参数说明</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">
+			        	<div>日期：</div>
+		 				<div>&nbsp;&nbsp;字符串格式的日期，#{Date(日期格式)+或者-天数}，例如#{Date(yyyy-MM-dd)}、#{Date(yyyy-MM-dd)-1}、#{Date(yyyy-MM-dd)+1}等</div>
+		 				<div>&nbsp;&nbsp;&nbsp;&nbsp;SQL例子：select * from tb where time < '#{Date(yyyy-MM-dd)}'</div>
+		 				<div>&nbsp;&nbsp;数字型日期：#{DateLong()+或者-天数}，例如#{DateLong()}、#{DateLong()+1}、#{DateLong()-1}</div>
+		 				<div>&nbsp;&nbsp;&nbsp;&nbsp;SQL例子：select * from tb where time < #{DateLong()}</div>
+		 				<div>其它的待开发</div>
+						</div>
+			        </div>			        
+			    </div>
+        </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">SHELL脚本</a>
+            </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse">
+        <div class="panel-body">
+            <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类全名</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">com.founder.scheduler.runnable.impl.ShellRunnable</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">执行类功能说明</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">定时执行配置的SHELL脚本，可配置参数</div>
+			        </div>			        
+			    </div>
+			    <div class="form-group">
+			        <label class="col-sm-2 control-label">配置数据结构</label>
+			        <div class="col-sm-10">
+			        	<div class="detailText">
+			        	{<br/>
+							&nbsp;"scripts":"脚本数组，例如["java -version"]",<br/>
+							&nbsp;"logPath":"日志文件路径，不配置就不写日志文件",<br/>
+							&nbsp;"isFusionInsight":"true或者false，是否华为大数据平台脚本，true的时候会先执行认证，再执行脚本",<br/>
+							&nbsp;"workDir":"工作目录，不设置就是默认程序所在目录",<br/>
+						}<br/>
+						</div>
+			        </div>			        
+			    </div>
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+
+</html>

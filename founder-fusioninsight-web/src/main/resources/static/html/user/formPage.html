@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+
+<form class="form-horizontal" role="form" style="width:95%" id="dataForm">
+	<input type="hidden" name="id" id="id">
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">用户账号</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" id="user_account" name="user_account" placeholder="请输入用户账号">
+        </div>
+        <label class="col-sm-2 control-label">用户密码</label>
+        <div class="col-sm-4">
+            <input type="password" class="form-control" id="user_password" name="user_password" placeholder="请输入PASSWORD">
+        </div>
+        
+    </div>
+
+    <div class="form-group">
+		<label class="col-sm-2 control-label">用户名</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="user_name" name="user_name" placeholder="请输入用户名">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">备注</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="bz" name="bz" placeholder="请输入备注信息"></textarea>
+        </div>
+    </div>
+
+</form>
+</body>
+<script type="text/javascript">
+	var submit_url = "#";
+	$(function(){
+		init();
+	});
+	
+	function init(){
+		var id = getUrlParam('id');
+		if(!id){//新增
+            initCreation();
+		}else{//修改
+            initUpdate(id);
+		}
+	}
+	
+	function initCreation() {
+        submit_url = basePath +"/user/insert";
+    }
+    
+    function initUpdate(zj) {
+        submit_url = basePath +"/user/update";
+        $("#id").val(id);
+
+        $.ajax({
+            url: basePath + '/user/queryByZj',
+            type: 'get',
+            dataType: 'json',
+            data :{
+                zj : zj
+            },
+            success : function(json){
+                loadFormData($("#dataForm"),json);
+                $("#user_account").attr("disabled",true);
+            },
+            complete : function(){
+
+            }
+        });
+    }
+    
+	function onSubmitClick(){
+        loading("open","数据处理中");
+		var formObj = $("#dataForm");
+		normalSubmitFormData(submit_url,getSubmitData(formObj),function(data){
+			if(data.message){
+				msgAlert({msg:data.message},function(){
+                    loading("close");
+					parent.refreshPageList();
+					parent.closeUrlWin();
+				});
+			}
+		});
+
+	}
+</script>
+</html>

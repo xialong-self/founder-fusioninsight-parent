@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+    <title>方正-华为大数据平台</title>
+    <script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+    <script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+    <style type="text/css">
+    	.loginDiv{
+    		    width: 460px;
+			    display: inline-block;
+			    padding-top: 40px;
+			    padding-left: 20px;
+    			padding-right: 20px;
+			    border-bottom: 1px;
+			    border-left: 1px;
+			    border-right: 1px;
+			    border-top: 0px;
+			    border-style: solid;
+    	}
+    </style>
+</head>
+
+<body style="text-align: center;">
+<div class="loginDiv">
+
+<form class="form-horizontal" role="form" id="dataForm">
+	<div class="form-group">
+		<label for="firstname" class="col-sm-3 control-label">用户账号</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control" id="loginid" name="loginid" placeholder="请输入用户账号">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="lastname" class="col-sm-3 control-label">用户密码</label>
+		<div class="col-sm-8">
+			<input type="password" class="form-control" id="password" name="password" placeholder="请输入用户密码">
+		</div>
+	</div>
+	<div class="form-group">
+		<button type="button" id="loginBtn" class="btn btn-default" onclick="doSubmit()">登录</button>
+	</div>
+</form>
+</div>
+</body>
+<script type="text/javascript">
+	$(function(){
+		window.onkeydown = function(event) {         
+			if(event.keyCode == 13) {             
+				document.getElementById("loginBtn").click();             
+				return false;         
+			}     
+		} 
+	});
+
+
+    function doSubmit(){
+    	var formObj = $("#dataForm");
+    	loading("open","登录中……");
+    	$.ajax({
+        	url : basePath + '/session/login',
+            type: 'post',
+            dataType: 'json',
+            data : getSubmitData(formObj),
+            success : function(data){
+            	loading("close");
+            	location.href=basePath+"/html/mainPage.html";
+            },
+            error: function(data){
+            	var msg = "数据提交失败！";
+            	if(data){
+            		if(data.message){
+            			msg = data.message;
+            		}else if(data.responseJSON){//有后台自定义的错误信息
+            			var resMsg = data.responseJSON.message;
+            			try{//返回可能不是json
+            				var resJson = eval("("+resMsg+")");
+                			if(resJson.message){
+                				msg = resJson.message;
+                			}else{
+                				msg = resMsg;
+                			}
+            			}catch(ex){
+            				msg = resMsg;
+            			}
+            			
+            		}else{
+            			msg = "数据提交失败:"+data;
+            		}
+            	}
+            	alert(msg);
+            	try{
+            		loading("close");
+            	}catch(e){}
+            	if (err_back) {
+            		var fn = eval(err_back);
+            		fn(data);
+            	}
+    		},
+            complete : function(){
+            	//loading("close")  //提交成功,关闭遮罩
+            }
+        });
+    }
+</script>
+</html>

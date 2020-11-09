@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+    <title>方正-华为大数据平台</title>
+    <script>document.write('\<script src="../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+    <script>document.write('\<script src="../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+    <style>
+        .main {
+            padding-left: 40px;
+            padding-right: 40px;
+            padding-top: 5px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 51px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            display: block;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            border-right: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body style="text-align: center;">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">方正-华为大数据平台</a>
+        </div>
+        <!-- <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" onclick="logout()">注销</a></li>
+            </ul>
+        </div> -->
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar sidebarItem">
+                <li id="userLi" style="display:none;"><a href="#" page_url="/html/user/pagelist.html" >用户管理</a></li>
+                <li id="routerLi"  style="display:none;"><a href="#" page_url="/html/router/pagelist.html" >路由配置</a></li>
+                <li class="active"><a href="#" page_url="/html/schedulerconfig/pagelist.html" >定时任务配置管理</a></li>
+                <li><a href="#" page_url="/html/es/esIndexPage.html" >EsIndex查询</a></li>
+                <li><a href="#" page_url="/html/es/esSql.html" >EsSql查询</a></li>
+                <li><a href="#" page_url="/html/es/esJson.html" >EsJson查询</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <iframe id="mainFrame" src="" width="100%" frameborder='0' name="_blank" id="_blank" style="top: 50px;position: inherit;"></iframe>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    var isTopFrame = true;//是否是顶层框架，用于下级框架轮询到它
+
+    $(function(){
+        reSizeFrame();
+        window.onresize=reSizeFrame;
+
+        getSessionInfo();
+
+    });
+
+    function afterLoadInit(sessionBean){
+    	if(sessionBean){
+    		initSidebarItem();
+    		if(sessionBean.user_account=='admin'){
+    			$("#userLi").show();
+    			$("#routerLi").show();
+    		}
+    	}else{
+    		topMsgAlert({msg : "请先登录"},function(){
+    			location.href=basePath;
+    		});
+    	}
+    }
+    
+    
+    function initSidebarItem() {
+        $('.sidebarItem').children('li').children('a').click(function () {
+            $('.sidebarItem').children('li').removeClass('active');
+            $(this).parent().addClass('active');
+            parent.showFrameHtml($(this).attr('page_url'));
+        });
+        $('.active').children('a').click();
+    }
+
+    function reSizeFrame(){
+        var iframe = document.getElementById("mainFrame");
+        iframe.height=window.innerHeight-80;
+    }
+
+    function showFrameHtml(url){
+        document.getElementById("mainFrame").src=basePath+url;
+    }
+
+    function topMsgAlert(config,calback){
+        if(!config){
+            return;
+        }
+        if(!config.title){
+            config.title="提示";
+        }
+        if(!config.msg){
+            config.msg="";
+        }
+
+        if(!config.bodyHeight){
+            config.bodyHeight = "200px";//默认高度
+        }
+
+        if(!config.winWidth){
+            config.winWidth = "300px";//默认宽度
+        }
+
+        var win_id = guid();//模态框ID
+        var html = '<div class="modal fade" id="'+win_id+'">';
+
+        html+='<div class="modal-dialog">';
+        html+='<div class="modal-content" style="width:'+config.winWidth+'">';
+
+        html+='<div class="modal-header">';
+        html+='<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
+        html+='<h4 class="modal-title" style="text-align: left;">'+config.title+'</h4>';
+        html+='</div>'
+
+        html+='<div class="modal-body" style="min-height:70px;">'+config.msg+'</div>';
+
+        html+='<div class="modal-footer" style="text-align: center;">';
+        html+='<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+        html+='</div>';
+
+        html+='</div>';
+        html+='</div>';
+
+        $("body").append(html);
+
+        $('#'+win_id).modal();
+
+        $('#'+win_id).on('hide.bs.modal', function() {
+            $('#'+win_id).remove();
+            if(calback){
+                calback();
+            }
+        });
+
+    }
+    
+    function logout(){
+    	loading("open","注销中……");
+    	$.ajax({
+        	url : basePath + '/session/logout',
+            type: 'post',
+            dataType: 'text',
+            success : function(data){
+            	loading("close");
+            	location.href=basePath;
+            },
+            error: function(data){
+            	var msg = "数据提交失败！";
+            	if(data){
+            		if(data.message){
+            			msg = data.message;
+            		}else if(data.responseJSON){//有后台自定义的错误信息
+            			var resMsg = data.responseJSON.message;
+            			try{//返回可能不是json
+            				var resJson = eval("("+resMsg+")");
+                			if(resJson.message){
+                				msg = resJson.message;
+                			}else{
+                				msg = resMsg;
+                			}
+            			}catch(ex){
+            				msg = resMsg;
+            			}
+            			
+            		}else{
+            			msg = "数据提交失败:"+data;
+            		}
+            	}
+            	alert(msg);
+            	try{
+            		loading("close");
+            	}catch(e){}
+            	if (err_back) {
+            		var fn = eval(err_back);
+            		fn(data);
+            	}
+    		},
+            complete : function(){
+            	//loading("close")  //提交成功,关闭遮罩
+            }
+        });
+    }
+</script>
+</html>

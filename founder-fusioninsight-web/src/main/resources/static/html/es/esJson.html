@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<link href="'+basePath+'/bootstrap/css/bootstrap-table.min.css?v=' + localVersion + '" rel="stylesheet" />');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/js/founder/founder.pagelist.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table-zh-CN.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+<form class="form-horizontal" role="form" style="width:100%" id="dataForm">
+	<div class="form-group">
+        <div class="col-sm-12">
+            <input class="form-control" id="index" name="index" placeholder="请输入index">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <textarea class="form-control" id="json" name="json" placeholder="请输入JSON" style="height: 130px;"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-12">
+            <button id="btn_add" type="button" class="btn btn-default btn" onclick="doQuery()">
+	            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
+	        </button>
+        </div>
+    </div>
+</form>
+
+<div>共<span id="total">0</span>条</div>
+<table id="dataGrid"></table>
+
+</body>
+<script type="text/javascript">
+
+
+$(function(){
+	
+});
+
+function doQuery(){
+	var json=$("#json").val();
+	if(!json){
+		return;
+	}
+	
+	var index=$("#index").val();
+	if(!index){
+		return;
+	}
+	
+	$.ajax({
+    	url : basePath+"/es/queryEsByJson",
+        type: 'post',
+        dataType: 'json',
+        data:{
+        	index: index,
+        	json: json
+        },
+        success : function(data){
+        	var rows = [];
+        	if(data.aggregations){
+        		for(var index in data.aggregations){
+        			rows = data.aggregations[index].buckets;
+        			break;
+        		}
+        	}else{        	
+	        	var hits = data.hits.hits;
+	        	var total = data.hits.total;
+	        	$("#total").text(total);
+	        	if(hits.length == 0){
+	        		msgAlert({msg:"未查询到结果"});
+	        		return;
+	        	}
+	        		        	
+	        	for(var index=0;index < hits.length;index++){
+	        		var row = hits[index]._source;
+	        		row.es_id = hits[index]._id;
+	        		rows.push(row);
+	        	}
+        	}
+        	var row = rows[0];
+        	var columns_config = [];
+        	for(var index in row){
+        		columns_config[columns_config.length]={field: index,title: index,align: 'center',valign: 'middle'};
+        	}
+        	
+        	showData(columns_config,rows);
+        	
+        },
+        error: function(data){
+        	var msg = "数据提交失败！";
+        	if(data){
+        		if(data.message){
+        			msg = data.message;
+        		}else if(data.responseJSON){//有后台自定义的错误信息
+        			var resMsg = data.responseJSON.message;
+        			try{//返回可能不是json
+        				var resJson = eval("("+resMsg+")");
+            			if(resJson.message){
+            				msg = resJson.message;
+            			}else{
+            				msg = resMsg;
+            			}
+        			}catch(ex){
+        				msg = resMsg;
+        			}
+        			
+        		}else{
+        			msg = "数据提交失败:"+data;
+        		}
+        	}
+        	msgAlert({msg:msg});
+        	try{
+        		loading("close");
+        	}catch(e){}
+        	if (err_back) {
+        		var fn = eval(err_back);
+        		fn(data);
+        	}
+		},
+        complete : function(){
+        	//loading("close")  //提交成功,关闭遮罩
+        }
+    });
+	
+}
+
+function showData(columns_config,rows){
+	$("#dataGrid").bootstrapTable('destroy').bootstrapTable({ // 对应table标签的id
+		data:rows,
+        striped: true,  //表格显示条纹，默认为false
+        columns: columns_config,
+    });
+	
+}
+</script>
+</html>

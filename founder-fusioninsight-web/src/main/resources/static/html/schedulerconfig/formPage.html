@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+
+<form class="form-horizontal" role="form" style="width:95%" id="dataForm">
+	<input type="hidden" name="id" id="id">
+
+	<div class="form-group">
+        <label class="col-sm-2 control-label">任务类型</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="type" name="type">
+				<option value="CRON">定时任务</option>
+				<option value="FIXEDDELAY">延时任务</option>
+			</select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">调度配置</label>
+        <div class="col-sm-10">
+         	<input type="text" class="form-control" id="scheduled" name="scheduled" placeholder="请输入调度配置">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">执行的类<span style="cursor: pointer;" class="glyphicon glyphicon-question-sign" aria-hidden="true" onclick="openHelpWin()"></span></label>
+        <div class="col-sm-10">
+            <select class="form-control" id="runnable" name="runnable">
+				<option value="com.founder.scheduler.runnable.impl.HttpRequestRunnable">HTTP请求</option>
+				<option value="com.founder.scheduler.runnable.impl.DbSqlRunnable">SQL脚本</option>
+				<option value="com.founder.scheduler.runnable.impl.ShellRunnable">Shell脚本</option>
+			</select>
+        </div>
+    </div>   
+    <div class="form-group">
+        <label class="col-sm-2 control-label">配置数据</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="configdata" name="configdata" placeholder=""></textarea>
+        </div>         
+    </div> 
+    <div class="form-group">
+        <label class="col-sm-2 control-label">备注</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="bz" name="bz" placeholder="">
+        </div>         
+    </div>
+    
+</form>
+
+<hr>
+
+<div class="bzDiv">
+	<div>备注：</div>
+	<li>1. “定时任务”的调度配置为固定的时间，例如每分钟“0 * * * * ?”。</li>
+	<li>2. “延时任务”的调度配置为上次任务执行完以后，延迟多少毫秒又开始，例如1秒“1000”。</li>	
+</div>
+</body>
+<script type="text/javascript">
+var submit_url = "#";
+	$(function(){
+		var id = getUrlParam('id');
+		if(!id){//新增
+            initCreation();
+		}else{//修改
+            initUpdate(id);
+		}
+	});
+	
+	function initCreation() {
+        submit_url = basePath +"/schedulerConfig/insert";
+    }
+    
+    function initUpdate(zj) {
+        submit_url = basePath +"/schedulerConfig/update";
+        $("#id").val(id);
+
+        $.ajax({
+            url: basePath + '/schedulerConfig/queryByZj',
+            type: 'get',
+            dataType: 'json',
+            data :{
+                zj : zj
+            },
+            success : function(json){
+                loadFormData($("#dataForm"),json);
+            },
+            complete : function(){
+            }
+        });
+    }
+	
+    
+	function onSubmitClick(){
+        
+		var submit_data = getSubmitData($("#dataForm"));
+		
+		if(!submit_data.scheduled){
+			msgAlert({msg : "调度配置不能都未空！"});
+			return;
+		}
+		
+		loading("open","数据处理中");
+		normalSubmitFormData(submit_url,submit_data,function(data){
+			if(data.message){
+				msgAlert({msg:data.message},function(){
+                    loading("close");
+					parent.refreshPageList();
+					parent.closeUrlWin();
+				});
+			}
+		});
+	}
+	
+	function openHelpWin(){
+		window.open(basePath+"/html/schedulerconfig/helpPage.html",'执行类说明文档');
+	}
+</script>
+</html>

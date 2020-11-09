@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="baseMapper">
+	<!-- 新增记录系统字段 -->
+	<sql id="insertXtzd">
+		XT_LRSJ,
+        XT_ZHXGSJ,
+        XT_ZXBZ
+	</sql>
+	<!-- 新增记录系统字段值 -->
+	<sql id="insertXtzdVal">
+		#{ xt_lrsj , jdbcType=VARCHAR },
+        #{ xt_zhxgsj , jdbcType=VARCHAR },
+        #{ xt_zxbz , jdbcType=VARCHAR }
+    </sql>
+	<!-- 修改记录系统字段，本来是没有注销的三个字段，但是老代码很多注销也是用的更新，那么多，我如何是好哇。。。。只能改成和注销的sql一样了！ -->
+	<sql id="updateXtzd">
+        <if test="xt_zhxgsj != null">
+            xt_zhxgsj = #{ xt_zhxgsj , jdbcType=VARCHAR }
+        </if>
+	</sql>
+	<!-- 注销记录系统字段 -->
+	<sql id="deleteXtzd">
+		<if test="xt_zhxgsj != null">
+            xt_zhxgsj = #{ xt_zhxgsj , jdbcType=VARCHAR },
+        </if>
+        
+        <if test="xt_zxbz != null">
+            xt_zxbz = #{ xt_zxbz , jdbcType=VARCHAR }
+        </if>
+        <if test="xt_zxbz == null">
+            xt_zxbz = '1'
+        </if>
+       
+	</sql>
+	
+	<!-- 查询系统字段 -->
+	<sql id="queryXtzd">
+        <if test="xt_lrsj != null">
+            AND xt_lrsj = #{ xt_lrsj , jdbcType=VARCHAR }
+        </if>
+		<if test="xt_zhxgsj != null">
+            AND xt_zhxgsj = #{ xt_zhxgsj , jdbcType=VARCHAR }
+        </if>
+        
+        <if test="xt_zxbz != null">
+            AND xt_zxbz = #{ xt_zxbz , jdbcType=VARCHAR }
+        </if>
+	</sql>
+	<sql id="queryByEntityXtzd">
+		<if test="entity.xt_lrsj != null">
+            AND xt_lrsj = #{ entity.xt_lrsj , jdbcType=VARCHAR }
+        </if>
+		<if test="entity.xt_zhxgsj != null">
+            AND xt_zhxgsj = #{ entity.xt_zhxgsj , jdbcType=VARCHAR }
+        </if>
+        <if test="entity.xt_zxbz != null">
+            AND xt_zxbz = #{ entity.xt_zxbz , jdbcType=VARCHAR }
+        </if>
+	</sql>
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.founder.scheduler.dao.SchedulerConfigDao">
+	<!-- 复制到mybatis-config.xml中
+	<typeAlias type="com.founder.scheduler.model.SchedulerConfig" alias="schedulerconfig" />
+	-->
+	
+    <insert id="insert" parameterType="schedulerconfig">
+        insert into SCHEDULER_CONFIG (
+	        ID, 
+	        TYPE, 
+	        SCHEDULED, 
+	        RUNNABLE, 
+	        CONFIGDATA, 
+	        BZ, 
+	        STATUS, 
+	        MSG, 
+	       <include refid="baseMapper.insertXtzd" />
+        )
+        values (
+  
+	         #{id , jdbcType=VARCHAR },
+	         #{type , jdbcType=VARCHAR },
+	         #{scheduled , jdbcType=VARCHAR },
+	         #{runnable , jdbcType=VARCHAR },
+	         #{configdata , jdbcType=VARCHAR },
+	         #{bz , jdbcType=VARCHAR },
+	         #{status , jdbcType=VARCHAR },
+	         #{msg , jdbcType=VARCHAR },
+        	<include refid="baseMapper.insertXtzdVal" />
+        )
+    </insert>
+
+    <update id="update" parameterType="schedulerconfig">
+        update SCHEDULER_CONFIG
+        <set>
+	        <if test="type != null">
+                type =  #{type , jdbcType=VARCHAR },
+            </if>
+	        <if test="scheduled != null">
+                scheduled =  #{scheduled , jdbcType=VARCHAR },
+            </if>
+	        <if test="runnable != null">
+                runnable =  #{runnable , jdbcType=VARCHAR },
+            </if>
+	        <if test="configdata != null">
+                configdata =  #{configdata , jdbcType=VARCHAR },
+            </if>
+	        <if test="bz != null">
+                bz =  #{bz , jdbcType=VARCHAR },
+            </if>
+	        <if test="status != null">
+                status =  #{status , jdbcType=VARCHAR },
+            </if>
+	        <if test="msg != null">
+                msg =  #{msg , jdbcType=VARCHAR },
+            </if>
+            <include refid="baseMapper.updateXtzd" />
+        </set>
+        where ID = #{id,jdbcType=VARCHAR }
+    </update>
+    
+    <update id="delete" parameterType="schedulerconfig">
+        <![CDATA[ update SCHEDULER_CONFIG set]]>
+        <include refid="baseMapper.deleteXtzd" />
+        <![CDATA[ where ID = #{id,jdbcType=VARCHAR } ]]>
+    </update>
+
+	<select id="queryByZj" resultType="schedulerconfig">
+		select * from SCHEDULER_CONFIG where ID = #{id,jdbcType=VARCHAR } limit 1
+	</select>
+	
+	<select id="queryListByEntity" resultType="schedulerconfig">
+		select * from SCHEDULER_CONFIG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<select id="querySingleByCondition" resultType="schedulerconfig">
+        select * from SCHEDULER_CONFIG 
+		<include refid="queryWhere"/>
+	    limit 1
+    </select>
+    
+    <select id="queryCountByEntity" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM SCHEDULER_CONFIG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<select id="queryPageCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM SCHEDULER_CONFIG 
+        <include refid="queryWhereByEntity"/>        
+    </select>
+
+    <select id="queryPageList" resultType="schedulerconfig">
+		SELECT a.* FROM (
+			SELECT * FROM SCHEDULER_CONFIG 
+        	<include refid="queryWhereByEntity"/>
+    	<![CDATA[
+         		order by ${sort} ${order},ID
+         ) a
+        limit #{begin}, #{rownum}
+        ]]>
+    </select>
+    
+    <sql id="queryWhere" >
+    	<where>
+	        <if test="id != null">
+                AND id =  #{id , jdbcType=VARCHAR }
+            </if>
+	        <if test="type != null">
+                AND type =  #{type , jdbcType=VARCHAR }
+            </if>
+	        <if test="scheduled != null">
+                AND scheduled =  #{scheduled , jdbcType=VARCHAR }
+            </if>
+	        <if test="runnable != null">
+                AND runnable =  #{runnable , jdbcType=VARCHAR }
+            </if>
+	        <if test="configdata != null">
+                AND configdata =  #{configdata , jdbcType=VARCHAR }
+            </if>
+	        <if test="bz != null">
+                AND bz =  #{bz , jdbcType=VARCHAR }
+            </if>
+	        <if test="status != null">
+                AND status =  #{status , jdbcType=VARCHAR }
+            </if>
+	        <if test="msg != null">
+                AND msg =  #{msg , jdbcType=VARCHAR }
+            </if>
+	    	<include refid="baseMapper.queryXtzd" />
+	    </where>
+    </sql>
+    
+    <sql id="queryWhereByEntity" >
+        <where>
+	        <if test="entity.id != null">
+                AND id =  #{entity.id , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.type != null">
+                AND type =  #{entity.type , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.scheduled != null">
+                AND scheduled =  #{entity.scheduled , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.runnable != null">
+                AND runnable =  #{entity.runnable , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.configdata != null">
+                AND configdata =  #{entity.configdata , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.bz != null">
+                AND bz =  #{entity.bz , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.status != null">
+                AND status =  #{entity.status , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.msg != null">
+                AND msg =  #{entity.msg , jdbcType=VARCHAR }
+            </if>
+	    	<include refid="baseMapper.queryByEntityXtzd" />
+        </where>
+    </sql>
+</mapper>

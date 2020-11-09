@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<link href="'+basePath+'/bootstrap/css/bootstrap-table.min.css?v=' + localVersion + '" rel="stylesheet" />');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/js/founder/founder.pagelist.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table-zh-CN.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<title>任务详情</title>
+</head>
+<body>
+<div style="width:100%">
+<div class="leftTitle">任务配置信息</div>
+<form class="form-horizontal" role="form" style="width:95%" id="dataForm">
+	<div class="form-group">
+        <label class="col-sm-2 control-label">任务类型</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="type" dict="BD_D_SCHEDULERTYPE"></div>
+        </div>
+        <label class="col-sm-2 control-label">调度配置</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="scheduled"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">任务状态</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="status"></div>
+        </div>
+        <label class="col-sm-2 control-label">备注</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="bz"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">录入时间</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="xt_lrsj"></div>
+        </div>
+        <label class="col-sm-2 control-label">最后修改时间</label>
+        <div class="col-sm-4">
+        	<div class="detailText" ywid="xt_zhxgsj"></div>
+        </div>
+    </div>
+</form>
+<div class="leftTitle">任务执行信息</div>
+<table id="dataGrid"></table>
+</div>
+</body>
+<script type="text/javascript">
+var columns_config = [];
+columns_config[columns_config.length]={field: 'start_time',title: '开始时间',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'end_time',title: '结束时间',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'result',title: '执行结果',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'msg',title: '消息',align: 'center',valign: 'middle',visible:true};
+
+var id;
+$(function(){
+	id = getUrlParam('id');
+	if(!id){
+		msgAlert({msg:"主键ID不能未空！"},function(){
+			window.close();
+		});
+	}else{
+		initDetail(id);			
+	}
+});
+	
+	function initDetail(zj) {
+		loading("open","数据加载中……");
+        $.ajax({
+            url: basePath+"/schedulerConfig/queryByZj",
+            type: 'get',
+            dataType: 'json',
+            data :{
+                zj : zj
+            },
+            success : function(json){
+            	loadDetail(json);
+            	$(".type_"+json.input_type).show();
+            	loadLogList();
+            },
+            complete : function(){
+            	loading("close");
+            }
+        });
+    }
+	
+	function loadLogList(){
+		var page_config = {
+			    tableId: 'dataGrid',
+				url: basePath+'/schedulerConfig/queryLogPageList',
+		        columns: columns_config
+			};
+			initPageListTable(page_config);
+	}
+	
+	function getPageListParam(){
+		return {task_id:id};
+	}
+</script>
+</html>

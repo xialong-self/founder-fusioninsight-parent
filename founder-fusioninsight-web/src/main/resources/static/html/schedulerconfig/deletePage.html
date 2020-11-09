@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+<form class="form-horizontal" role="form" style="width:95%" id="dataForm">
+	<input type="hidden" name="id" id="id">
+	<label style="color:red;">确定要删除该任务么？</label>
+</form>
+</body>
+<script type="text/javascript">
+	var submit_url = "#";
+	$(function(){
+        submit_url = basePath +"/schedulerConfig/delete";
+        var id = getUrlParam('id');
+        $("#id").val(id);
+	});
+	
+	function onSubmitClick(){
+		var formObj = $("#dataForm");
+		normalSubmitFormData(submit_url,getSubmitData(formObj),function(data){
+			if(data.message){
+				msgAlert({msg:data.message},function(){
+					parent.refreshPageList();
+					parent.closeUrlWin();
+				});
+			}
+		});
+	}
+</script>
+</html>

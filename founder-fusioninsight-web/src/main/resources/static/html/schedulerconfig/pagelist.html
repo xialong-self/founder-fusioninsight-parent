@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<script>document.write('\<script src="../../js/include/commonInclude.js?v=' + Math.random() + '"\>\<\/script\>');</script>
+<script>document.write('\<link href="'+basePath+'/bootstrap/css/bootstrap-table.min.css?v=' + localVersion + '" rel="stylesheet" />');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/js/founder/founder.pagelist.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="'+basePath+'/bootstrap/js/bootstrap-table-zh-CN.min.js?v=' + localVersion + '"\>\<\/script\>');</script>
+<script>document.write('\<script src="../../js/founder/founder.formTools.js?v=' + localVersion + '"\>\<\/script\>');</script>
+</head>
+<body>
+    <div id="toolbar" >
+        <button id="btn_add" type="button" class="btn btn-default btn" onclick="openAddWin()">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+    </div>
+    <table id="dataGrid"></table>
+
+</body>
+
+<script type="text/javascript">
+var columns_config = [];
+columns_config[columns_config.length]={field: 'id',title: 'ID',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'type',title: '任务类型',align: 'center',valign: 'middle',formatter:dictFormatter,dictName: 'BD_D_SCHEDULERTYPE'};
+columns_config[columns_config.length]={field: 'scheduled',title: '调度配置',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'runnable',title: '执行的类',align: 'center',valign: 'middle'};
+columns_config[columns_config.length]={field: 'configdata',title: '配置数据',align: 'center',valign: 'middle',visible:false};
+columns_config[columns_config.length]={field: 'bz',title: '备注',align: 'center',valign: 'middle',visible:true};
+columns_config[columns_config.length]={field: 'xt_zhxgsj',title: '最后修改时间',align: 'center',valign: 'middle',visible:false};
+
+columns_config[columns_config.length]={title: '操作',align: 'center',valign: 'middle',width: 180,
+        formatter: function (value, row, index) {
+        	var html ='<a class="btn btn-link" onclick="detailRow(\''+row.id+'\')">详情</a>';
+        		html += '<a class="btn btn-link" onclick="modifyRow(\''+row.id+'\')">修改</a>';
+        		html += '<a class="btn btn-link" onclick="deleteRow(\''+row.id+'\')">删除</a>';
+            
+            return html;
+        }
+    };
+
+
+$(function(){
+	getSessionInfo();	
+});
+
+var session;
+
+function afterLoadInit(sessionBean){
+	if(sessionBean){
+		session = sessionBean;
+		var page_config = {
+		    tableId: 'dataGrid',
+			url: basePath+'/schedulerConfig/queryPageList',
+	        columns: columns_config
+		};
+		initPageListTable(page_config);
+	}else{
+		topMsgAlert({msg : "请先登录"},function(){
+			location.href=basePath;
+		});
+	}
+}
+
+//打开新增任务的窗口
+function openAddWin(){
+	openUrlWin(basePath+"/html/schedulerconfig/formPage.html",{winName:"新增任务",width:"800px",height:"350px"});
+}
+
+function detailRow(id){
+	window.open(basePath+"/html/schedulerconfig/detailPage.html?id="+id,'任务详情');
+}
+
+function modifyRow(id){
+	openUrlWin(basePath+"/html/schedulerconfig/formPage.html?id="+id,{winName:"修改任务",width:"800px",height:"350px"});
+}
+
+function deleteRow(id){
+	openUrlWin(basePath+"/html/schedulerconfig/deletePage.html?id="+id,{winName:"删除任务",width:"400px",height:"100px"});
+}
+
+function refreshPageList(){
+    $("[name=refresh]").click();
+}
+
+function getPageListParam(){
+	return {xt_zxbz:'0'};
+}
+</script>
+</html>

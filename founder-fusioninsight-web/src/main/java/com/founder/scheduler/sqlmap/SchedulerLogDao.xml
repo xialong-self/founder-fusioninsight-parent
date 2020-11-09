@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.founder.scheduler.dao.SchedulerLogDao">
+	<!-- 复制到mybatis-config.xml中
+	<typeAlias type="com.founder.scheduler.model.SchedulerLog" alias="schedulerlog" />
+	-->
+	
+    <insert id="insert" parameterType="schedulerlog">
+        insert into SCHEDULER_LOG (
+	        ID, 
+	        TASK_ID, 
+	        START_TIME, 
+	        END_TIME, 
+	        RESULT, 
+	        MSG
+        )
+        values (
+  
+	         #{id , jdbcType=VARCHAR },
+	         #{task_id , jdbcType=VARCHAR },
+	         #{start_time , jdbcType=VARCHAR },
+	         #{end_time , jdbcType=VARCHAR },
+	         #{result , jdbcType=VARCHAR },
+	         #{msg , jdbcType=VARCHAR }
+        )
+    </insert>
+
+    <update id="update" parameterType="schedulerlog">
+        update SCHEDULER_LOG
+        <set>
+	        <if test="task_id != null">
+                task_id =  #{task_id , jdbcType=VARCHAR },
+            </if>
+	        <if test="start_time != null">
+                start_time =  #{start_time , jdbcType=VARCHAR },
+            </if>
+	        <if test="end_time != null">
+                end_time =  #{end_time , jdbcType=VARCHAR },
+            </if>
+	        <if test="result != null">
+                result =  #{result , jdbcType=VARCHAR },
+            </if>
+	        <if test="msg != null">
+                msg =  #{msg , jdbcType=VARCHAR },
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR }
+    </update>
+    
+	<select id="queryByZj" resultType="schedulerlog">
+		select * from SCHEDULER_LOG where ID = #{id,jdbcType=VARCHAR } limit 1
+	</select>
+	
+	<select id="queryListByEntity" resultType="schedulerlog">
+		select * from SCHEDULER_LOG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<select id="querySingleByCondition" resultType="schedulerlog">
+        select * from SCHEDULER_LOG 
+		<include refid="queryWhere"/>
+	    limit 1
+    </select>
+    
+    <select id="queryCountByEntity" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM SCHEDULER_LOG 
+		<include refid="queryWhere"/>
+	</select>
+	
+	<select id="queryPageCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM SCHEDULER_LOG 
+        <include refid="queryWhereByEntity"/>        
+    </select>
+
+    <select id="queryPageList" resultType="schedulerlog">
+		SELECT a.* FROM (
+			SELECT * FROM SCHEDULER_LOG 
+        	<include refid="queryWhereByEntity"/>
+    	<![CDATA[
+         		order by ${sort} ${order},ID
+         ) a
+        limit #{begin}, #{rownum}
+        ]]>
+    </select>
+    
+    <sql id="queryWhere" >
+    	<where>
+	        <if test="id != null">
+                AND id =  #{id , jdbcType=VARCHAR }
+            </if>
+	        <if test="task_id != null">
+                AND task_id =  #{task_id , jdbcType=VARCHAR }
+            </if>
+	        <if test="start_time != null">
+                AND start_time =  #{start_time , jdbcType=VARCHAR }
+            </if>
+	        <if test="end_time != null">
+                AND end_time =  #{end_time , jdbcType=VARCHAR }
+            </if>
+	        <if test="result != null">
+                AND result =  #{result , jdbcType=VARCHAR }
+            </if>
+	        <if test="msg != null">
+                AND msg =  #{msg , jdbcType=VARCHAR }
+            </if>
+	    </where>
+    </sql>
+    
+    <sql id="queryWhereByEntity" >
+        <where>
+	        <if test="entity.id != null">
+                AND id =  #{entity.id , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.task_id != null">
+                AND task_id =  #{entity.task_id , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.start_time != null">
+                AND start_time =  #{entity.start_time , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.end_time != null">
+                AND end_time =  #{entity.end_time , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.result != null">
+                AND result =  #{entity.result , jdbcType=VARCHAR }
+            </if>
+	        <if test="entity.msg != null">
+                AND msg =  #{entity.msg , jdbcType=VARCHAR }
+            </if>
+        </where>
+    </sql>
+</mapper>
